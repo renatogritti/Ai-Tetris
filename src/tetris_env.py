@@ -110,7 +110,7 @@ class TetrisEnv(gym.Env):
             for c in range(GRID_LARGURA):
                 if self.engine.grid[r][c] != "":
                     grid_binaria[r, c] = 1.0
-                    
+
         return {
             "grid": grid_binaria,
             "current_piece": PEÇA_PARA_INT.get(self.engine.current_piece_type, 0),

@@ -125,14 +125,14 @@ PONTOS_POR_LINHAS: Dict[int, int] = {
 # Estes pesos determinam o cálculo da recompensa no wrapper do Gymnasium.
 # A recompensa é calculada com base nos DELTAS (mudanças após cada ação), não em valores absolutos.
 # Isso evita que a IA "prefira morrer" para escapar de penalidades contínuas de altura.
-RL_PESO_LINHAS_LIMPAS: float = 10.0    # Recompensa alta por limpar linhas (comportamento desejado)
-RL_PESO_ALTURA: float = -1.0           # Penalidade por AUMENTAR a altura máxima
-RL_PESO_BURACOS: float = -3.0          # Penalidade por CRIAR novos buracos (inacessíveis)
-RL_PESO_BUMPINESS: float = -0.5        # Penalidade por AUMENTAR a irregularidade entre colunas
-RL_PESO_PERDA: float = -5.0            # Penalidade ao perder o jogo (Game Over)
-RL_RECOMPENSA_PASSO: float = 0.001     # Recompensa pequena por sobreviver a cada passo
+RL_PESO_LINHAS_LIMPAS: float = 15.0    # Aumentado para 15.0 (limpar linhas é PRIORITÁRIO)
+RL_PESO_ALTURA: float = -2.0           # Aumentado para -2.0 (penalizar altura mais)
+RL_PESO_BURACOS: float = -4.0          # Aumentado para -4.0 (buracos são muito ruins)
+RL_PESO_BUMPINESS: float = -0.8        # Aumentado para -0.8 (favorecer estruturas planas)
+RL_PESO_PERDA: float = -10.0           # Aumentado para -10.0 (não cair!)
+RL_RECOMPENSA_PASSO: float = 0.005     # Aumentado para 0.005 (incentivar sobreviver)
 
-RL_PESO_DENSIDADE_LINHAS: float = 0.3
+RL_PESO_DENSIDADE_LINHAS: float = 1.0  # Aumentado para 1.0 (construir linhas quase completas)
 """
 Peso para a recompensa de densidade das linhas.
 

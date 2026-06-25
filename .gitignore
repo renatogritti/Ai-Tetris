@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.env
+env/
+.venv/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+*.whl
+
+# PyInstaller
+dist/
+build/
+*.spec
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+*.py,cover
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# TensorBoard logs
+tb_logs/
+
+# Saved models and training checkpoints
+saved_models/
+
+# IDE / editor files
+.vscode/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# MacOS
+.AppleDouble
+.LSOverride
+
+# Windows image file caches
+ehthumbs.db
+Icon?
+
+# Visual Studio
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# PyCharm
+.idea/
+*.iml
+
+# Others
+*.tmp

@@ -25,14 +25,14 @@ contendo a grade bidimensional (Box) e as peças (Discrete).
 # HIPERPARÂMETROS DO MODELO (PPO)
 # ==============================================================================
 HIPERPARAMETROS_PPO: Dict[str, Any] = {
-    "learning_rate": 0.0003,       # Taxa de aprendizado inicial
+    "learning_rate": 0.0005,       # Taxa de aprendizado inicial (aumentado para melhor convergência)
     "n_steps": 2048,               # Número de passos para rodar por vetor de ambiente antes de atualizar
-    "batch_size": 64,              # Tamanho do lote para otimização
-    "n_epochs": 10,                # Número de épocas na otimização do gradiente substituto
+    "batch_size": 128,             # Tamanho do lote aumentado para 128 (melhor estabilidade)
+    "n_epochs": 15,                # Aumentado para 15 épocas (mais refinamento)
     "gamma": 0.99,                 # Fator de desconto para recompensas futuras
     "gae_lambda": 0.95,            # Fator para trade-off de viés-variância na estimativa do GAE
     "clip_range": 0.2,             # Parâmetro de clipagem do PPO
-    "ent_coef": 0.01,              # Coeficiente de entropia para incentivar a exploração (evita convergência precoce)
+    "ent_coef": 0.08,              # AUMENTADO para 0.08 (mais exploração, menos convergência precoce)
     "verbose": 1                   # Nível de log detalhado no console (1 = estatísticas básicas)
 }
 
@@ -73,8 +73,9 @@ EPISODIOS_AVALIACAO: int = 5
 RENDERIZAR_AVALIACAO: bool = False
 """Se verdadeiro, exibe visualmente o jogo durante a fase de avaliação do agente."""
 
-RENDERIZAR_TREINAMENTO: bool = True
+RENDERIZAR_TREINAMENTO: bool = False
 """
 Se verdadeiro, exibe visualmente o jogo em tempo real durante todo o treinamento.
-Ideal para demonstrações educacionais. Defina como False para acelerar o treinamento (modo headless).
+Ideal para demonstrações educacionais. DEIXAR FALSE PARA MODO HEADLESS RÁPIDO!
+→ Renderização ativa reduz velocidade em 5-10x!
 """
