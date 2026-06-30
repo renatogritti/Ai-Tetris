@@ -1,86 +1,223 @@
-# Tetris AI (Placement-Based Reinforcement Learning)
+# 🎮 Tetris AI — Deep Q-Network com Features Heurísticas
 
-Este projeto treina um agente de Tetris usando Reinforcement Learning com uma abordagem de posicionamento final. Em vez de controlar cada movimento no jogo, o agente escolhe uma combinação de rotação e coluna destino para a próxima peça.
+Agente de Inteligência Artificial que aprende a jogar Tetris usando **Deep Reinforcement Learning (DQN)** com features heurísticas do tabuleiro. Em vez de processar pixels ou a grid bruta, o agente avalia métricas estratégicas do board para decidir onde colocar cada peça.
 
-## Estrutura principal
+## 🧠 Arquitetura da IA
 
-- `train_placement.py` — script principal de treinamento
-- `evaluate_placement.py` — avaliação estatística do modelo treinado
-- `test_placement.py` — visualização do modelo jogando
-- `src/tetris_env_placement.py` — ambiente Gymnasium de posicionamento final
-- `config_train.py` — hiperparâmetros e diretórios de logs
-- `GUIA_OTIMIZACAO.md` — guia de otimização do projeto
-- `requirements.txt` — dependências do projeto
-- `saved_models/` — modelos salvos e checkpoints
+### Abordagem: DQN com Avaliação de Estados
 
-## Configuração
+Para cada peça, o sistema:
+1. **Enumera** todas as posições finais válidas (rotação × coluna)
+2. **Simula** cada placement em uma cópia do tabuleiro
+3. **Extrai** 4 features heurísticas do board resultante
+4. **Avalia** cada estado com a rede neural (Q-value)
+5. **Escolhe** a posição com maior Q-value
 
-Use o ambiente virtual do projeto e instale as dependências:
+### Features Heurísticas
 
-```powershell
-cd "c:\Users\renat\Documents\Python\Games\Ai Tetris"
+| Feature | Descrição | Impacto |
+|---------|-----------|---------|
+| `lines_cleared` | Linhas eliminadas pelo placement | Objetivo principal |
+| `holes` | Células vazias abaixo de blocos | Principal causa de game over |
+| `bumpiness` | Irregularidade da superfície | Superfícies planas = mais Tetris |
+| `aggregate_height` | Soma das alturas das colunas | Manter board baixo = sobrevivência |
+
+### Rede Neural
+
+```
+Input (4 features) → Dense(64, ReLU) → Dense(64, ReLU) → Output(1, Q-value)
+```
+
+A rede é propositalmente compacta — as features já são altamente informativas.
+
+## 📁 Estrutura do Projeto
+
+```
+├── train_dqn.py                  # 🏋️ Script principal de treinamento
+├── demo_ai.py                    # 🎬 Demonstração visual da IA jogando
+├── main.py                       # 🎮 Jogo manual (teclado)
+├── config_train.py               # ⚙️ Hiperparâmetros do DQN
+├── requirements.txt              # 📦 Dependências
+├── README.md                     # 📖 Esta documentação
+├── GUIA_OTIMIZACAO.md            # 🔧 Guia de otimização detalhado
+│
+├── src/
+│   ├── dqn_agent.py              # 🤖 Agente DQN (PyTorch)
+│   ├── tetris_env_features.py    # 🌍 Ambiente com features heurísticas
+│   ├── tetris_engine.py          # ⚡ Motor lógico do Tetris
+│   ├── tetris_gui.py             # 🖼️ Interface gráfica (Pygame)
+│   ├── config.py                 # 🎨 Configurações do jogo
+│   ├── tetris_env.py             # 📦 Ambiente Gymnasium (legado)
+│   └── tetris_env_placement.py   # 📦 Ambiente placement (legado)
+│
+├── saved_models/                 # 💾 Modelos treinados
+│   ├── tetris_dqn_best.pt        #     Melhor modelo
+│   ├── tetris_dqn_final.pt       #     Modelo final
+│   └── checkpoints/              #     Checkpoints intermediários
+│
+└── tb_logs/                      # 📊 Logs de treinamento
+    └── training_log.csv          #     Métricas por episódio
+```
+
+## 🚀 Início Rápido
+
+### 1. Instalar Dependências
+
+```bash
+cd /home/gritti/Documentos/python/Ai/Ai-Tetris
 python -m venv .venv
-& .\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> Se o ambiente virtual já existir, apenas ative-o:
+### 2. Treinar o Modelo
 
-```powershell
-& .\.venv\Scripts\Activate.ps1
+```bash
+# Treinamento padrão (3000 episódios, ~15-30 min)
+python train_dqn.py
+
+# Treinamento customizado
+python train_dqn.py --episodes 5000
+
+# Continuar treinamento de modelo existente
+python train_dqn.py --continue-from ./saved_models/tetris_dqn_best.pt
+
+# Treinar com visualização (lento, para debug)
+python train_dqn.py --render
 ```
 
-## Treinamento
+**Saída do treinamento:**
+```
+==========================================================================================
+  TREINAMENTO DQN - TETRIS AI (Features Heurísticas)
+==========================================================================================
+  Episódios: 3000
+  Batch size: 512
+  Learning rate: 0.001
+  Epsilon: 1.0 → 0.001 (2000 eps)
+==========================================================================================
 
-Execute o script de treino para iniciar o treinamento do agente de posicionamento:
-
-```powershell
-python train_placement.py --train
+    Ep │  Score Méd │  Score Máx │  Linhas Méd │  Peças Méd │  Epsilon │     Loss │  Tempo
+──────────────────────────────────────────────────────────────────────────────────────────────
+    50 │       40.0 │        120 │         0.2 │        8.5 │   0.9750 │   0.0234 │   2.1s
+   100 │       80.0 │        300 │         0.8 │       12.3 │   0.9500 │   0.0187 │   2.3s
+   ...
+  2500 │     2400.0 │       8500 │        18.5 │       85.2 │   0.0010 │   0.0021 │   4.5s
+  3000 │     3200.0 │      12000 │        24.1 │      102.7 │   0.0010 │   0.0018 │   4.8s
 ```
 
-O modelo final será salvo em:
+### 3. Demonstrar o Modelo
 
-- `saved_models/tetris_ppo_model_placement.zip`
+```bash
+# Demonstração visual (velocidade padrão)
+python demo_ai.py
 
-## Avaliação
+# Mais rápido
+python demo_ai.py --velocidade 15
 
-Para avaliar o modelo com vários episódios:
+# Modelo específico
+python demo_ai.py --modelo ./saved_models/tetris_dqn_best.pt
 
-```powershell
-python evaluate_placement.py --modelo ./saved_models/tetris_ppo_model_placement.zip --episodios 20
+# Parar após 5 jogos
+python demo_ai.py --episodios 5
 ```
 
-## Visualização
+### 4. Jogar Manualmente
 
-Para assistir o agente jogando em modo humano:
-
-```powershell
-python test_placement.py --modelo ./saved_models/tetris_ppo_model_placement.zip
+```bash
+python main.py
 ```
 
-## Guia de otimização
+**Controles:**
+- ← / → : Mover peça
+- ↑ : Rotacionar
+- ↓ : Descida lenta
+- Espaço : Queda rápida
+- P : Pausar
 
-O arquivo `GUIA_OTIMIZACAO.md` contém o fluxo completo de treinamento, avaliação, ajustes de hiperparâmetros e recomendações de melhoria.
+## ⚙️ Configuração de Hiperparâmetros
 
-## Observações
+Edite `config_train.py` para ajustar:
 
-- Os scripts antigos `train.py` e `evaluate_model.py` foram removidos da nova pipeline.
-- `main.py` permanece para o jogo manual, mas não é parte da nova abordagem de RL.
+| Parâmetro | Default | Descrição |
+|-----------|---------|-----------|
+| `batch_size` | 512 | Tamanho do minibatch |
+| `gamma` | 0.99 | Fator de desconto |
+| `learning_rate` | 1e-3 | Taxa de aprendizado |
+| `epsilon_start` | 1.0 | Exploração inicial |
+| `epsilon_end` | 1e-3 | Exploração final |
+| `epsilon_decay_episodes` | 2000 | Episódios de decay |
+| `buffer_capacity` | 20000 | Tamanho do replay buffer |
+| `TOTAL_EPISODIOS` | 3000 | Episódios de treinamento |
 
-## Problemas comuns
+## 📊 Monitoramento do Treinamento
 
-- Se o treinamento estiver muito lento, confirme que `RENDERIZAR_TREINAMENTO` está `False` em `config_train.py`.
-- Se o score permanecer baixo, tente aumentar `TOTAL_TIMESTEPS`, `ent_coef` e ajustar as recompensas em `src/config.py`.
+O treinamento gera um arquivo CSV (`tb_logs/training_log.csv`) com todas as métricas. Você pode plotar os resultados com:
 
-## Dependências principais
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
 
-- `stable-baselines3`
-- `gymnasium`
-- `pygame`
-- `numpy`
-- `tensorboard`
+df = pd.read_csv("tb_logs/training_log.csv")
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+axes[0,0].plot(df["episodio"], df["score_med"])
+axes[0,0].set_title("Score Médio")
+
+axes[0,1].plot(df["episodio"], df["lines_med"])
+axes[0,1].set_title("Linhas Médias")
+
+axes[1,0].plot(df["episodio"], df["epsilon"])
+axes[1,0].set_title("Epsilon Decay")
+
+axes[1,1].plot(df["episodio"], df["loss_med"])
+axes[1,1].set_title("Loss Média")
+
+plt.tight_layout()
+plt.savefig("training_progress.png")
+plt.show()
+```
+
+## 🔬 Detalhes Técnicos
+
+### Por que DQN e não PPO?
+
+| Aspecto | PPO (antigo) | DQN (novo) |
+|---------|-------------|------------|
+| Tipo | On-policy | Off-policy |
+| Replay de experiências | ❌ Descarta após uso | ✅ Reutiliza milhares de vezes |
+| Eficiência de dados | Baixa | Alta |
+| Espaço de ações | Todas as ações possíveis | Avalia cada estado futuro |
+| Convergência em Tetris | ~1M+ timesteps, instável | ~2000 episódios, estável |
+
+### Por que Features e não Grid Bruta?
+
+| Entrada | Dimensão | Convergência |
+|---------|----------|-------------|
+| Grid bruta 20×10 | 200 valores | Muito lenta ou nunca |
+| Grid + peça (2 canais) | 400 valores | Lenta |
+| 4 features heurísticas | 4 valores | Rápida (~2000 eps) |
+
+As features condensam a informação estratégica relevante, eliminando ruído.
+
+## 📦 Dependências Principais
+
+- **PyTorch** — Rede neural e treinamento do DQN
+- **Pygame** — Interface gráfica do jogo
+- **NumPy** — Computação numérica
+- **Gymnasium** — Interface padrão de ambientes (legado)
+- **Matplotlib** — Plotagem de métricas de treinamento
+
+## 📝 Arquivos Legados
+
+Os seguintes arquivos são mantidos para compatibilidade mas não fazem parte da nova pipeline DQN:
+
+- `train_placement.py` — Treinamento PPO antigo
+- `evaluate_placement.py` — Avaliação PPO antiga
+- `test_placement.py` — Teste PPO antigo
+- `src/tetris_env.py` — Ambiente Gymnasium com ações atômicas
+- `src/tetris_env_placement.py` — Ambiente de placement com PPO
 
 ---
 
-Para o fluxo completo de otimização, abra `GUIA_OTIMIZACAO.md`.
+Para otimização avançada, consulte o [Guia de Otimização](GUIA_OTIMIZACAO.md).
