@@ -1,18 +1,19 @@
+# ==============================================================================
+#  AI Tetris - Hiperparâmetros do treinamento DQN
+#
+#  Author: Renato Gritti
+#  Descrição: Centraliza os hiperparâmetros e diretórios de saída do treinamento.
+# ==============================================================================
 """
-Módulo de Configuração para o Treinamento DQN (config_train.py).
+Configuração do treinamento do agente DQN para Tetris.
 
-Este arquivo reúne todos os parâmetros e hiperparâmetros necessários para o
-treinamento do agente DQN customizado. Permite ajustar facilmente a arquitetura
-da rede, taxas de aprendizado, epsilon decay e diretórios de salvamento.
-
-Abordagem:
-    - DQN com features heurísticas (aggregate_height, holes, bumpiness, lines_cleared)
-    - Rede pequena (4 → 64 → 64 → 1) avaliando cada estado futuro possível
-    - Experience Replay com buffer circular
-    - Target Network sincronizada periodicamente
+Este módulo reúne todos os parâmetros necessários para ajustar a arquitetura da
+rede, a taxa de aprendizado, o decaimento do epsilon e os diretórios de saída
+do treinamento. A estratégia atual usa features heurísticas do tabuleiro para
+avaliar cada placement possível.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
 # ==============================================================================
 # HIPERPARÂMETROS DO AGENTE DQN

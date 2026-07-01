@@ -1,12 +1,18 @@
+# ==============================================================================
+#  AI Tetris - Agente DQN
+#
+#  Author: Renato Gritti
+#  Descrição: Implementa o agente DQN responsável por avaliar placements de Tetris.
+# ==============================================================================
 """
-Agente DQN Customizado para Tetris (dqn_agent.py).
+Agente DQN customizado para Tetris.
 
-Implementa um Deep Q-Network otimizado para o paradigma de avaliação de estados
-do Tetris. Em vez de mapear (estado → ação), a rede avalia cada possível estado
-resultante e retorna um Q-value. O agente escolhe a ação que leva ao estado
-com maior Q-value.
+Este módulo implementa um Deep Q-Network otimizado para o paradigma de
+avaliação de estados do Tetris. Em vez de mapear (estado → ação), a rede
+avalia cada possível estado resultante e retorna um Q-value. O agente escolhe
+a ação que leva ao estado com maior valor estimado.
 
-Arquitetura da Rede:
+Arquitetura da rede:
     Input (4 features) → 64 (ReLU) → 64 (ReLU) → 1 (Q-value)
 
 Componentes:
@@ -17,7 +23,7 @@ Componentes:
 
 import random
 from collections import deque
-from typing import List, Tuple, Optional
+from typing import Deque, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -88,7 +94,7 @@ class ReplayBuffer:
         Parâmetros:
             capacity (int): Número máximo de experiências armazenadas.
         """
-        self.buffer = deque(maxlen=capacity)
+        self.buffer: Deque[Tuple[np.ndarray, float, np.ndarray, bool]] = deque(maxlen=capacity)
 
     def store(
         self,
@@ -177,28 +183,28 @@ class DQNAgent:
             epsilon_end (float): Epsilon final (exploração mínima).
             epsilon_decay_episodes (int): Episódios para decaimento do epsilon.
         """
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.num_features = num_features
-        self.batch_size = batch_size
-        self.gamma = gamma
+        self.device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.num_features: int = num_features
+        self.batch_size: int = batch_size
+        self.gamma: float = gamma
 
         # Redes neural (policy e target)
-        self.policy_net = TetrisNet(num_features).to(self.device)
-        self.target_net = TetrisNet(num_features).to(self.device)
+        self.policy_net: TetrisNet = TetrisNet(num_features).to(self.device)
+        self.target_net: TetrisNet = TetrisNet(num_features).to(self.device)
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
 
         # Otimizador
-        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=learning_rate)
+        self.optimizer: optim.Adam = optim.Adam(self.policy_net.parameters(), lr=learning_rate)
 
         # Replay Buffer
-        self.replay_buffer = ReplayBuffer(capacity=buffer_capacity)
+        self.replay_buffer: ReplayBuffer = ReplayBuffer(capacity=buffer_capacity)
 
         # Epsilon-greedy
-        self.epsilon = epsilon_start
-        self.epsilon_start = epsilon_start
-        self.epsilon_end = epsilon_end
-        self.epsilon_decay_episodes = epsilon_decay_episodes
+        self.epsilon: float = epsilon_start
+        self.epsilon_start: float = epsilon_start
+        self.epsilon_end: float = epsilon_end
+        self.epsilon_decay_episodes: int = epsilon_decay_episodes
 
     def choose_action(self, next_states: List[np.ndarray]) -> int:
         """

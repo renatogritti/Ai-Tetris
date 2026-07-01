@@ -1,11 +1,17 @@
+# ==============================================================================
+#  AI Tetris - Treinamento do agente DQN
+#
+#  Author: Renato Gritti
+#  Descrição: Treina um agente DQN para jogar Tetris com features heurísticas.
+# ==============================================================================
 """
-Script de Treinamento DQN para Tetris (train_dqn.py).
+Treinamento do agente DQN para Tetris.
 
-Treina um agente DQN a jogar Tetris usando features heurísticas do tabuleiro.
-O treinamento exibe métricas detalhadas no console para acompanhamento em
-tempo real da convergência do modelo.
+Este módulo treina um agente DQN a jogar Tetris usando features heurísticas do
+tabuleiro. O fluxo de treinamento exibe métricas detalhadas no console para
+acompanhar a evolução do modelo em tempo real.
 
-Métricas reportadas a cada N episódios:
+Métricas reportadas a cada bloco de episódios:
     - Score médio, máximo e mínimo
     - Linhas eliminadas (média e máximo)
     - Peças colocadas (média)
@@ -23,7 +29,7 @@ import os
 import csv
 import time
 import argparse
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 import numpy as np
 
@@ -159,14 +165,14 @@ def treinar(
     env = TetrisFeatureEnv()
 
     # GUI opcional para renderização durante treinamento
-    gui = None
+    gui: Optional[object] = None
     if render:
         from src.tetris_engine import TetrisEngine
         from src.tetris_gui import TetrisGUI
         import pygame
 
     # Tracking de métricas
-    melhor_score_medio = -float("inf")
+    melhor_score_medio: float = -float("inf")
     bloco_scores: List[int] = []
     bloco_lines: List[int] = []
     bloco_pieces: List[int] = []

@@ -1,6 +1,15 @@
-# 🎮 Tetris AI — Deep Q-Network com Features Heurísticas
+<!--
+===============================================================================
+ AI Tetris - Documentação principal do projeto
 
-Agente de Inteligência Artificial que aprende a jogar Tetris usando **Deep Reinforcement Learning (DQN)** com features heurísticas do tabuleiro. Em vez de processar pixels ou a grid bruta, o agente avalia métricas estratégicas do board para decidir onde colocar cada peça.
+ Author: Renato Gritti
+ Descrição: Visão geral do projeto, fluxo de uso e estrutura de arquivos.
+===============================================================================
+-->
+
+# 🎮 AI Tetris — Deep Q-Network com Features Heurísticas
+
+Este projeto implementa um agente de Inteligência Artificial que aprende a jogar Tetris usando Deep Reinforcement Learning com DQN e features heurísticas do tabuleiro. Em vez de processar pixels ou a grade bruta, o agente avalia métricas estratégicas do estado para decidir o melhor placement de cada peça.
 
 ## 🧠 Arquitetura da IA
 
@@ -46,9 +55,7 @@ A rede é propositalmente compacta — as features já são altamente informativ
 │   ├── tetris_env_features.py    # 🌍 Ambiente com features heurísticas
 │   ├── tetris_engine.py          # ⚡ Motor lógico do Tetris
 │   ├── tetris_gui.py             # 🖼️ Interface gráfica (Pygame)
-│   ├── config.py                 # 🎨 Configurações do jogo
-│   ├── tetris_env.py             # 📦 Ambiente Gymnasium (legado)
-│   └── tetris_env_placement.py   # 📦 Ambiente placement (legado)
+│   └── config.py                 # 🎨 Configurações do jogo
 │
 ├── saved_models/                 # 💾 Modelos treinados
 │   ├── tetris_dqn_best.pt        #     Melhor modelo
@@ -208,15 +215,9 @@ As features condensam a informação estratégica relevante, eliminando ruído.
 - **Gymnasium** — Interface padrão de ambientes (legado)
 - **Matplotlib** — Plotagem de métricas de treinamento
 
-## 📝 Arquivos Legados
+## 🧹 Arquivos Legados
 
-Os seguintes arquivos são mantidos para compatibilidade mas não fazem parte da nova pipeline DQN:
-
-- `train_placement.py` — Treinamento PPO antigo
-- `evaluate_placement.py` — Avaliação PPO antiga
-- `test_placement.py` — Teste PPO antigo
-- `src/tetris_env.py` — Ambiente Gymnasium com ações atômicas
-- `src/tetris_env_placement.py` — Ambiente de placement com PPO
+Os módulos antigos relacionados ao fluxo PPO/Gymnasium foram removidos do fluxo principal, pois a implementação atual prioriza a abordagem DQN com features heurísticas e o motor de jogo direto.
 
 ---
 

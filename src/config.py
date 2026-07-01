@@ -1,10 +1,15 @@
+# ==============================================================================
+#  AI Tetris - Configurações do engine e interface
+#
+#  Author: Renato Gritti
+#  Descrição: Centraliza as constantes de grade, interface, cores e parâmetros do jogo.
+# ==============================================================================
 """
-Módulo de Configuração do Jogo Tetris.
+Configuração central do jogo Tetris.
 
-Este arquivo contém todas as constantes, definições de cores,
-formatos das peças (Tetrominos), parâmetros de jogabilidade e pesos
-de recompensa para o treinamento de aprendizado por reforço (RL).
-Todos os valores podem ser ajustados diretamente aqui.
+Este módulo concentra as constantes de grid, interface gráfica, formatos das
+peças, parâmetros de jogabilidade e pesos de recompensa usados pelo motor e
+pelo agente de aprendizagem por reforço.
 """
 
 from typing import Dict, List, Tuple

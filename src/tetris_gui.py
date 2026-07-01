@@ -1,11 +1,16 @@
+# ==============================================================================
+#  AI Tetris - Interface gráfica do jogo
+#
+#  Author: Renato Gritti
+#  Descrição: Renderiza o jogo com Pygame e gerencia o controle manual por teclado.
+# ==============================================================================
 """
-Módulo de Interface Gráfica do Tetris (TetrisGUI).
+Interface gráfica do Tetris.
 
 Este módulo gerencia a renderização visual do jogo usando a biblioteca Pygame.
-Possui recursos visuais avançados como paletas premium de cores (neon/dark mode),
-peça fantasma (que indica onde a peça atual irá pousar), efeitos de brilho/sombra
-e painéis para informações adicionais (próxima peça, pontuação, nível e linhas).
-Também controla o loop principal de jogo para usuários humanos (controle manual).
+Ele fornece uma experiência visual com grade, painel lateral, peças fantasma,
+e efeitos de destaque. Também controla o loop principal de jogo para usuários
+humanos no modo manual.
 """
 
 import sys
@@ -59,16 +64,16 @@ class TetrisGUI:
         self.clock = pygame.time.Clock()
         
         # Coordenadas de posicionamento da grade de jogo (centralizada verticalmente na esquerda)
-        self.board_x = 40
-        self.board_y = 40
+        self.board_x: int = 40
+        self.board_y: int = 40
         
         # Inicialização de Fontes
         self.fontes: Dict[str, pygame.font.Font] = {}
         self._inicializar_fontes()
         
         # Estado de Controle do Loop
-        self.pausado = False
-        self.jogo_iniciado = False
+        self.pausado: bool = False
+        self.jogo_iniciado: bool = False
 
     def _inicializar_fontes(self) -> None:
         """Tenta carregar fontes modernas do sistema, com fallback para a fonte padrão."""

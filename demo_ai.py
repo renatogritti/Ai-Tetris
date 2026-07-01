@@ -1,5 +1,11 @@
+# ==============================================================================
+#  AI Tetris - Demonstração visual do agente DQN
+#
+#  Author: Renato Gritti
+#  Descrição: Carrega um modelo treinado e exibe a IA jogando Tetris em tempo real.
+# ==============================================================================
 """
-Demonstração Visual da IA Tetris (demo_ai.py).
+Demonstração visual da IA Tetris.
 
 Carrega um modelo DQN treinado e exibe a IA jogando Tetris em tempo real
 usando a interface Pygame. O programa roda em loop contínuo, reiniciando
@@ -16,6 +22,7 @@ import argparse
 import os
 import sys
 import time
+from typing import List
 
 import numpy as np
 import pygame
@@ -78,8 +85,8 @@ def rodar_demo(
     gui.jogo_iniciado = True
 
     ep_count = 0
-    total_scores = []
-    total_lines = []
+    total_scores: List[int] = []
+    total_lines: List[int] = []
 
     try:
         while True:

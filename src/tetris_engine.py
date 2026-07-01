@@ -1,14 +1,20 @@
+# ==============================================================================
+#  AI Tetris - Motor lógico do jogo
+#
+#  Author: Renato Gritti
+#  Descrição: Implementa a lógica pura do Tetris, incluindo peças, colisões e pontuação.
+# ==============================================================================
 """
-Módulo do Motor Lógico do Tetris (TetrisEngine).
+Motor lógico do Tetris.
 
-Este módulo implementa a lógica pura do jogo Tetris, incluindo a grade,
-gerenciamento de peças, colisões, pontuação clássica e detecção de fim de jogo.
-Foi projetado para ser independente de qualquer biblioteca de interface gráfica (como Pygame),
-permitindo execuções extremamente rápidas em simulações e treinamento de IA.
+Este módulo implementa a lógica pura do jogo, incluindo a grade, o
+gerenciamento de peças, colisões, pontuação clássica e detecção de fim de
+jogo. Ele foi projetado para ser independente de qualquer biblioteca de
+interface gráfica, permitindo execuções rápidas em simulações e treinamento de IA.
 """
 
 import random
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple, TypeAlias
 from src.config import (
     GRID_LARGURA,
     GRID_ALTURA,
@@ -16,6 +22,10 @@ from src.config import (
     PONTOS_POR_LINHAS,
     LINHAS_POR_NIVEL
 )
+
+Grid: TypeAlias = List[List[str]]
+PieceShape: TypeAlias = List[List[int]]
+
 
 class TetrisEngine:
     """
@@ -36,7 +46,7 @@ class TetrisEngine:
 
     def __init__(self) -> None:
         """Inicializa um novo motor do Tetris resetado."""
-        self.grid: List[List[str]] = [["" for _ in range(GRID_LARGURA)] for _ in range(GRID_ALTURA)]
+        self.grid: Grid = [["" for _ in range(GRID_LARGURA)] for _ in range(GRID_ALTURA)]
         self.score: int = 0
         self.lines_cleared_total: int = 0
         self.level: int = 0
@@ -44,7 +54,7 @@ class TetrisEngine:
         
         # Estado das peças
         self.current_piece_type: str = ""
-        self.current_piece_shape: List[List[int]] = []
+        self.current_piece_shape: PieceShape = []
         self.current_x: int = 0
         self.current_y: int = 0
         
@@ -55,7 +65,7 @@ class TetrisEngine:
 
     def reset(self) -> None:
         """Reinicia o estado do jogo para o padrão inicial."""
-        self.grid = [["" for _ in range(GRID_LARGURA)] for _ in range(GRID_ALTURA)]
+        self.grid: Grid = [["" for _ in range(GRID_LARGURA)] for _ in range(GRID_ALTURA)]
         self.score = 0
         self.lines_cleared_total = 0
         self.level = 0
@@ -107,7 +117,7 @@ class TetrisEngine:
         if self.check_collision(self.current_piece_shape, self.current_x, self.current_y):
             self.game_over = True
 
-    def check_collision(self, shape: List[List[int]], offset_x: int, offset_y: int) -> bool:
+    def check_collision(self, shape: PieceShape, offset_x: int, offset_y: int) -> bool:
         """
         Verifica se a peça com a forma especificada colide com as bordas
         ou blocos já fixados no grid.
@@ -269,7 +279,7 @@ class TetrisEngine:
             int: Quantidade de linhas limpas.
         """
         lines_cleared = 0
-        new_grid: List[List[str]] = []
+        new_grid: Grid = []
         
         for row in self.grid:
             # Se houver qualquer bloco vazio, a linha não está completa

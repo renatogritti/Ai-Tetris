@@ -1,32 +1,34 @@
+# ==============================================================================
+#  AI Tetris - Ambiente com features heurísticas
+#
+#  Author: Renato Gritti
+#  Descrição: Gera estados e placements válidos para o agente DQN usar no treinamento.
+# ==============================================================================
 """
-Ambiente Tetris com Features Heurísticas (tetris_env_features.py).
+Ambiente Tetris com features heurísticas.
 
-Implementa o paradigma de avaliação de estados para Tetris:
-Para cada peça, o ambiente enumera TODAS as posições finais válidas
-(combinação de rotação × coluna), simula cada placement em uma cópia
-do tabuleiro, e extrai 4 features heurísticas do board resultante.
-
-Features extraídas por estado:
-    1. lines_cleared: Linhas eliminadas por este placement
-    2. holes: Número de buracos no tabuleiro resultante
-    3. bumpiness: Irregularidade da superfície (soma de |Δh| entre colunas)
-    4. aggregate_height: Soma das alturas de todas as colunas
-
-O agente DQN recebe esses vetores de features e escolhe o placement
-que maximiza o Q-value, em vez de aprender a partir da grid bruta.
+Este módulo implementa o paradigma de avaliação de estados para o Tetris.
+Para cada peça, o ambiente enumera todas as posições finais válidas
+(combinação de rotação × coluna), simula cada placement em uma cópia do
+tabuleiro e extrai quatro features heurísticas do estado resultante. Essas
+features alimentam o agente DQN e substituem a necessidade de aprender a partir
+da grade bruta.
 """
 
 import copy
 import random
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TypeAlias
 
 import numpy as np
 
 from src.config import GRID_ALTURA, GRID_LARGURA, FORMATOS_PEÇAS
 from src.tetris_engine import TetrisEngine
 
+Grid: TypeAlias = List[List[str]]
+PieceShape: TypeAlias = List[List[int]]
 
-def _rotate_shape(shape: List[List[int]]) -> List[List[int]]:
+
+def _rotate_shape(shape: PieceShape) -> PieceShape:
     """
     Rotaciona a matriz da peça 90 graus no sentido horário.
 
@@ -39,7 +41,7 @@ def _rotate_shape(shape: List[List[int]]) -> List[List[int]]:
     return [list(row) for row in zip(*shape[::-1])]
 
 
-def _get_unique_rotations(piece_type: str) -> List[List[List[int]]]:
+def _get_unique_rotations(piece_type: str) -> List[PieceShape]:
     """
     Retorna todas as rotações únicas de uma peça.
 
@@ -86,7 +88,7 @@ class TetrisFeatureEnv:
 
     def __init__(self) -> None:
         """Inicializa o ambiente com um novo motor do Tetris."""
-        self.engine = TetrisEngine()
+        self.engine: TetrisEngine = TetrisEngine()
         self.score: int = 0
         self.pieces_placed: int = 0
         self.lines_cleared: int = 0
@@ -107,7 +109,7 @@ class TetrisFeatureEnv:
         self.game_over = False
         return self.get_next_states()
 
-    def _compute_features(self, grid: List[List[str]]) -> np.ndarray:
+    def _compute_features(self, grid: Grid) -> np.ndarray:
         """
         Calcula as 4 features heurísticas de um tabuleiro.
 
@@ -165,8 +167,8 @@ class TetrisFeatureEnv:
         )
 
     def _try_placement(
-        self, shape: List[List[int]], target_x: int, grid: List[List[str]], piece_type: str
-    ) -> Optional[List[List[str]]]:
+        self, shape: PieceShape, target_x: int, grid: Grid, piece_type: str
+    ) -> Optional[Grid]:
         """
         Tenta colocar uma peça em uma posição específica do tabuleiro.
 
@@ -257,8 +259,8 @@ class TetrisFeatureEnv:
         rotations = _get_unique_rotations(piece_type)
         current_grid = self.engine.grid
 
-        states = []
-        self._valid_placements = []  # Armazena (shape, target_x) para cada estado
+        states: List[np.ndarray] = []
+        self._valid_placements: List[Tuple[PieceShape, int]] = []  # Armazena (shape, target_x) para cada estado
 
         for shape in rotations:
             shape_width = len(shape[0])
@@ -337,7 +339,7 @@ class TetrisFeatureEnv:
             "level": self.engine.level,
         }
 
-    def get_current_board(self) -> List[List[str]]:
+    def get_current_board(self) -> Grid:
         """
         Retorna o estado atual do tabuleiro (para renderização).
 

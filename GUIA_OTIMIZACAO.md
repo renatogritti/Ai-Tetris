@@ -1,10 +1,17 @@
-# 🔧 Guia de Otimização — Tetris AI (DQN)
+<!--
+===============================================================================
+ AI Tetris - Guia de otimização do treinamento
+
+ Author: Renato Gritti
+ Descrição: Orientações detalhadas para ajustar e monitorar o treinamento DQN.
+===============================================================================
+-->
+
+# 🔧 Guia de Otimização — AI Tetris (DQN)
 
 ## 📋 Visão Geral
 
-Este guia explica como otimizar o treinamento do agente DQN para Tetris.
-A abordagem usa **features heurísticas** (aggregate_height, holes, bumpiness, lines_cleared)
-em vez da grid bruta, resultando em convergência rápida e estável.
+Este guia descreve as melhores práticas para otimizar o treinamento do agente DQN do projeto. A abordagem atual usa features heurísticas (aggregate_height, holes, bumpiness e lines_cleared) em vez da grade bruta, o que resulta em uma convergência mais rápida e estável.
 
 ## 🚀 Fluxo Recomendado
 
